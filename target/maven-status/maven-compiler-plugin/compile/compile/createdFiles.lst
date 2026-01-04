@@ -1,7 +1,0 @@
-com\application\todoapi\controller\ToDoController.class
-com\application\todoapi\entity\ToDo$Status.class
-com\application\todoapi\repository\ToDoRepository.class
-com\application\todoapi\security\SecurityConfig.class
-com\application\todoapi\service\ToDoService.class
-com\application\todoapi\entity\ToDo.class
-com\application\todoapi\ToDoApiApplication.class
