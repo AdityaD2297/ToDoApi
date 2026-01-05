@@ -1,21 +1,20 @@
 package com.application.todoapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo")
 public class ToDo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -25,18 +24,45 @@ public class ToDo {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+
     private String description;
 
     @Column(nullable = false)
-    private boolean completed;
+    private Boolean completed;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public enum Status {
         PENDING,
         IN_PROGRESS,
         COMPLETED;
+    }
+
+    public enum Priority {
+        LOW,
+        MEDIUM,
+        HIGH;
     }
 }

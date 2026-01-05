@@ -2,8 +2,8 @@ package com.application.todoapi.controller;
 
 import com.application.todoapi.common.request.ToDoRequest;
 import com.application.todoapi.common.response.ToDoResponse;
+import com.application.todoapi.entity.ToDo;
 import com.application.todoapi.service.ToDoService;
-import jakarta.servlet.ServletResponse;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,13 +31,17 @@ public class ToDoController {
 
     @GetMapping
     public ResponseEntity<Page<ToDoResponse>> getAllToDos(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) ToDo.Status status,
+            @RequestParam(required = false) ToDo.Priority priority,
+            @RequestParam(required = false) Boolean completed,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(toDoService.getAllLists(pageable));
+        return ResponseEntity.ok(toDoService.getAllLists(search, status, priority, completed, pageable));
     }
 
     @GetMapping("/{id}")
