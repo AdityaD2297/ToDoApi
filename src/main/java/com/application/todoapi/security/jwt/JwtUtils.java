@@ -1,4 +1,4 @@
-package com.application.todoapi.security;
+package com.application.todoapi.security.jwt;
 
 import com.application.todoapi.entity.User;
 import io.jsonwebtoken.Claims;

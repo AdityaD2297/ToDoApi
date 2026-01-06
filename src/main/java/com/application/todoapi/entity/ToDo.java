@@ -17,6 +17,10 @@ public class ToDo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     @Column(nullable = false)
     private String title;
 
@@ -64,5 +68,9 @@ public class ToDo {
         LOW,
         MEDIUM,
         HIGH;
+
+        public String getAuthority() {
+            return "ROLE_" + name();
+        }
     }
 }

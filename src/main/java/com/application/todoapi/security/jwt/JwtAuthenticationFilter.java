@@ -1,4 +1,4 @@
-package com.application.todoapi.security;
+package com.application.todoapi.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

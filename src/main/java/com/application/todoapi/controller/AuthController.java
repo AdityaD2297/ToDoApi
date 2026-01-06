@@ -4,7 +4,7 @@ import com.application.todoapi.common.request.LoginRequest;
 import com.application.todoapi.common.response.AuthResponse;
 import com.application.todoapi.entity.User;
 import com.application.todoapi.repository.UserRepository;
-import com.application.todoapi.security.JwtUtils;
+import com.application.todoapi.security.jwt.JwtUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

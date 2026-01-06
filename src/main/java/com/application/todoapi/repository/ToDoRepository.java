@@ -4,12 +4,17 @@ import com.application.todoapi.entity.ToDo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ToDoRepository extends JpaRepository<ToDo, Long> {
+import java.util.Optional;
 
-    ToDo findByIdAndUserId(Long id, Long userId);
+@Repository
+public interface ToDoRepository extends JpaRepository<ToDo, Long>, JpaSpecificationExecutor<ToDo> {
+
+    Optional<ToDo> findByIdAndUserId(Long id, Long userId);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
 
     Page<ToDo> findByTitleContainingIgnoreCase(String title, Long userId, Pageable pageable);
 
@@ -25,5 +30,5 @@ public interface ToDoRepository extends JpaRepository<ToDo, Long> {
 
     Page<ToDo> findByCompleted(boolean completed, Long userId, Pageable pageable);
 
-    Page<ToDo> findAll(Long userId, Pageable pageable);
+    Page<ToDo> findAllByUserId(Long userId, Pageable pageable);
 }
