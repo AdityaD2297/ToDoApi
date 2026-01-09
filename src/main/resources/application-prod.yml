@@ -1,0 +1,43 @@
+server:
+  port: 8080
+  tomcat:
+    max-swallow-size: 1MB
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/todoapp}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  servlet:
+    multipart:
+      max-request-size: 1MB
+      max-file-size: 1MB
+
+logging:
+  level:
+    com.application.todoapi: INFO
+    org.springframework.web.servlet.handler.HandlerMappingIntrospector: ERROR
+    org.springframework.security: WARN
+
+management:
+  endpoint:
+    web:
+        exposure:
+            include: health,info
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
