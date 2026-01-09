@@ -32,7 +32,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         if(authentication != null && authentication.isAuthenticated()) {
             String userName = authentication.getName();
             Bucket bucket = buckets.computeIfAbsent(userName, k -> newBucket());
-            if (bucket.tryConsume(1)) {
+            if (!bucket.tryConsume(1)) {
                 response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                 response.getWriter().write("Too many requests - Rate limit exceeded");
                 return;

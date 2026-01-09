@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.Objects;
 import java.util.stream.Stream;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,10 +18,11 @@ public class ToDoRequest {
     private String description;
     private ToDo.Status status;
     private ToDo.Priority priority;
+    private LocalDateTime dueDate;
     private Boolean completed;
 
     public void isCreateRequestValid() {
-         if(!Stream.of(title, status, priority).allMatch(Objects::nonNull)) {
+         if(!Stream.of(title, status, priority, dueDate).allMatch(Objects::nonNull)) {
              throw new ResourceNotFoundException("Required Fields Missing");
          }
     }

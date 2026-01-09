@@ -4,6 +4,8 @@ import com.application.todoapi.entity.ToDo;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class ToDoSpecification {
 
@@ -20,6 +22,11 @@ public class ToDoSpecification {
     public static Specification<ToDo> hasPriority(ToDo.Priority priority) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("priority"), priority);
+    }
+
+    public static Specification<ToDo> hasDueDate(LocalDateTime dueDate) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("dueDate"), dueDate);
     }
 
     public static Specification<ToDo> isCompleted(Boolean completed) {

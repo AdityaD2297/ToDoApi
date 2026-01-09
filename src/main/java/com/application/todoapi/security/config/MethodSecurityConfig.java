@@ -1,4 +1,4 @@
-package com.application.todoapi.security;
+package com.application.todoapi.security.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

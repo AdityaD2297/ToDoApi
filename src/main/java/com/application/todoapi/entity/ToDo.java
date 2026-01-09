@@ -32,6 +32,9 @@ public class ToDo {
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
+    @Column(nullable = false)
+    private LocalDateTime dueDate;
+
     private String description;
 
     @Column(nullable = false)

@@ -22,6 +22,8 @@ public class ToDoResponseMapper {
         response.setCompleted(toDo.getCompleted());
         response.setCreatedAt(toDo.getCreatedAt());
         response.setUpdatedAt(toDo.getUpdatedAt());
+        response.setPriority(toDo.getPriority());
+        response.setUser(toDo.getUser());
         return response;
     }
 }

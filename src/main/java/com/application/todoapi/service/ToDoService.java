@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static com.application.todoapi.common.specificatiom.ToDoSpecification.*;
 
@@ -49,6 +50,7 @@ public class ToDoService {
         newToDo.setDescription(toDo.getDescription());
         newToDo.setStatus(toDo.getStatus());
         newToDo.setPriority(toDo.getPriority());
+        newToDo.setDueDate(toDo.getDueDate());
         newToDo.setCompleted(false);
         newToDo.setUser(user);
         log.info("ToDo item created successfully for user with ID: {}", userId);
@@ -69,7 +71,7 @@ public class ToDoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ToDoResponse> getAllLists(String search, ToDo.Status status, ToDo.Priority priority, Boolean completed,Pageable pageable) {
+    public Page<ToDoResponse> getAllLists(String search, ToDo.Status status, ToDo.Priority priority, Boolean completed, LocalDateTime dueDate, Pageable pageable) {
         log.info("Fetching ToDo items for current user with filters - search: {}, status: {}, priority: {}, completed: {}", search, status, priority, completed);
         Long userId = securityUtils.getCurrentUserId();
         Page<ToDo> page;
@@ -78,6 +80,7 @@ public class ToDoService {
                 .and(hasStatus(status))
                 .and(hasPriority(priority))
                 .and(isCompleted(completed))
+                .and(hasDueDate(dueDate))
                 .and(titleContains(search));
         page = toDoRepository.findAll(spec, pageable);
         log.info("ToDo items fetched successfully for current user");
@@ -97,6 +100,7 @@ public class ToDoService {
             existingToDo.setDescription(toDo.getDescription());
             existingToDo.setStatus(toDo.getStatus());
             existingToDo.setPriority(toDo.getPriority());
+            existingToDo.setDueDate(toDo.getDueDate());
             existingToDo.setCompleted(toDo.getCompleted());
             log.info("ToDo item with id: {} updated successfully for current user", id);
             return toDoResponseMapper.mapToDoToResponse(toDoRepository.save(existingToDo));
@@ -141,6 +145,10 @@ public class ToDoService {
 
             if (patchRequest.getPriority() != null) {
                 existingToDo.setPriority(patchRequest.getPriority());
+            }
+
+            if (patchRequest.getDueDate() != null) {
+                existingToDo.setDueDate(patchRequest.getDueDate());
             }
 
             if (patchRequest.getCompleted() != null) {
