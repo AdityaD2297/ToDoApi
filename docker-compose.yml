@@ -30,13 +30,14 @@ services:
       dockerfile: Dockerfile
     container_name: todoapp-api
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: docker
       DB_URL: jdbc:postgresql://postgres:5432/todoapp
       DB_USERNAME: todo_user
       DB_PASSWORD: todo_password
       JWT_SECRET: myVerySecureSecretKeyForJWTTokenGenerationThatIsLongEnough
       JWT_EXPIRATION: 86400000
       SERVER_PORT: 8080
+      DDL_AUTO: update
     ports:
       - "8080:8080"
     depends_on:

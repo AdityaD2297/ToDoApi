@@ -1,5 +1,5 @@
 # Multi-stage build for production-ready Spring Boot application
-FROM openjdk:17-jdk-slim as builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -19,15 +19,13 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Production stage
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Install required packages for production
-RUN apt-get update && \
-    apt-get install -y curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 # Create application user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN addgroup -g 1000 appuser && adduser -D -s /bin/sh -u 1000 -G appuser appuser
 
 # Set working directory
 WORKDIR /app
