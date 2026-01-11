@@ -49,5 +49,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
 # Set JVM options for production
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
+# Set Spring profile to production
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dspring.profiles.active=prod -jar app.jar"]
