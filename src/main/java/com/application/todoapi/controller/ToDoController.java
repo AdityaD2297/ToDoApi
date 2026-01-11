@@ -5,7 +5,6 @@ import com.application.todoapi.common.response.ToDoResponse;
 import com.application.todoapi.entity.ToDo;
 import com.application.todoapi.service.ToDoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -55,13 +54,14 @@ public class ToDoController {
             @RequestParam(required = false) ToDo.Priority priority,
             @RequestParam(required = false) LocalDateTime dueDate,
             @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(toDoService.getAllLists(search, status, priority, completed, dueDate, pageable));
+        return ResponseEntity.ok(toDoService.getAllLists(search, status, priority, completed, dueDate, userId, pageable));
     }
 
     @GetMapping("/{id}")

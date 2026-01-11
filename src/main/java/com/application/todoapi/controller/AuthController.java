@@ -3,35 +3,47 @@ package com.application.todoapi.controller;
 import com.application.todoapi.common.request.LoginRequest;
 import com.application.todoapi.common.request.RegisterRequest;
 import com.application.todoapi.common.response.AuthResponse;
+import com.application.todoapi.common.response.UserResponse;
 import com.application.todoapi.entity.User;
 import com.application.todoapi.exception.AuthenticationException;
 import com.application.todoapi.repository.UserRepository;
 import com.application.todoapi.security.jwt.JwtUtils;
+import com.application.todoapi.service.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 @Tag(name = "Authentication", description = "User authentication and registration endpoints")
 public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtil) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtil, TokenBlacklistService tokenBlacklistService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @PostMapping("/login")
@@ -51,6 +63,38 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user);
         return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Logout user", description = "Logout authenticated user and invalidate JWT token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Logout successful"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            tokenBlacklistService.blacklistToken(token);
+        }
+        
+        return ResponseEntity.ok("User logged out successfully");
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Get current user", description = "Get the current authenticated user's information")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User information retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
+        Long id = (Long) authentication.getPrincipal();
+        User user = null;
+        if (id != null) {
+            user = userRepository.findById(id)
+                    .orElseThrow(() -> new AuthenticationException("User not found"));
+        }
+
+        return ResponseEntity.ok(UserResponse.fromUser(user));
     }
 
     @PostMapping("/register")
